@@ -1,0 +1,219 @@
+/* ============================================
+   雨宫优子 · Hexo 博客背景与透明主题
+   照片路径: /images/雨宫优子.jpg
+   ============================================ */
+
+/* 全屏壁纸背景 */
+body {
+  background: url("/images/雨宫优子.jpg") no-repeat center center fixed !important;
+  background-size: cover !important;
+}
+
+/* 页面主体容器毛玻璃透明效果 */
+#container,
+#wrap {
+  background: rgba(245, 240, 255, 0.82) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 博客文章卡片透明 */
+.article {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12) !important;
+  margin-bottom: 24px !important;
+  transition: all 0.3s ease !important;
+}
+
+.article:hover {
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18) !important;
+  transform: translateY(-2px);
+}
+
+.article-inner {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 文章内容区 */
+.article-entry {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-radius: 0 0 12px 12px !important;
+  padding: 20px 24px !important;
+  color: #333 !important;
+  line-height: 1.8 !important;
+}
+
+/* 文章头部 */
+.article-header {
+  padding: 16px 24px 0 !important;
+}
+
+/* 文章标题 */
+.article-title {
+  color: #2c3e50 !important;
+  font-weight: 700 !important;
+}
+
+/* 文章元信息（日期/标签/分类） */
+.article-meta {
+  color: #888 !important;
+  font-size: 13px !important;
+  margin-top: 6px !important;
+}
+
+/* 文章摘要 */
+.article-excerpt {
+  color: #555 !important;
+  padding: 12px 24px !important;
+}
+
+/* 侧边栏小部件透明 */
+.widget {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 16px !important;
+  padding: 14px !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.widget-title {
+  color: #5a4a8a !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid rgba(90, 74, 138, 0.3) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+/* 头部导航 */
+#header {
+  background: rgba(60, 40, 100, 0.78) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+#header-inner {
+  background: transparent !important;
+}
+
+#brand .logo,
+#brand .site-title {
+  color: #fff !important;
+}
+
+#main-nav {
+  background: transparent !important;
+}
+
+#main-nav li a {
+  color: rgba(255, 255, 255, 0.9) !important;
+  transition: color 0.2s !important;
+}
+
+#main-nav li a:hover {
+  color: #d4a5ff !important;
+}
+
+/* 底部栏 */
+#footer {
+  background: rgba(40, 20, 80, 0.82) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+#footer a {
+  color: #d4a5ff !important;
+}
+
+#footer a:hover {
+  color: #fff !important;
+}
+
+/* 归档页文章列表 */
+.archive-article {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-radius: 10px !important;
+  padding: 14px 18px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.25s ease !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.archive-article:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  transform: translateX(4px);
+}
+
+/* 标签样式 */
+.tag.tag--interact {
+  background: rgba(90, 74, 138, 0.85) !important;
+  color: #fff !important;
+  border-radius: 20px !important;
+  padding: 3px 10px !important;
+  font-size: 12px !important;
+  transition: all 0.2s !important;
+}
+
+.tag.tag--interact:hover {
+  background: rgba(90, 74, 138, 1) !important;
+}
+
+/* 文章"阅读更多"按钮 */
+.article-more-link a {
+  background: rgba(90, 74, 138, 0.85) !important;
+  color: #fff !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-size: 13px !important;
+  transition: all 0.2s !important;
+}
+
+.article-more-link a:hover {
+  background: rgba(90, 74, 138, 1) !important;
+  box-shadow: 0 4px 12px rgba(90, 74, 138, 0.4) !important;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(90, 74, 138, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(90, 74, 138, 0.8);
+}
+
+/* 移动端适配 */
+@media max-width: 768px {
+  body {
+    background-attachment: scroll !important;
+  }
+
+  .article,
+  .widget,
+  .archive-article {
+    border-radius: 8px !important;
+    margin: 0 8px 12px !important;
+  }
+
+  #footer {
+    border-radius: 8px 8px 0 0 !important;
+  }
+}
