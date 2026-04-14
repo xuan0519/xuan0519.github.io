@@ -411,11 +411,6 @@ body {
   overflow: hidden;
 }
 
-/* 主页隐藏默认文章样式 */
-#main > .article {
-  display: none;
-}
-
 /* 分页导航 */
 #page-nav {
   text-align: center;
