@@ -247,6 +247,9 @@ body {
 
 .featured-cover {
   height: 380px;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
   display: flex;
   align-items: flex-end;
   position: relative;
