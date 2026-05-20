@@ -6,15 +6,15 @@
   
   <title>Linux内核提权 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Linux内核提权本文档详细介绍了 Linux 内核提权的相关技术和方法。 下载点击下载 PDF 文档 简介Linux 内核提权是安全研究中非常重要的一部分，涉及利用内核漏洞从普通用户权限提升到 root 权限。 本文档涵盖了：  内核漏洞原理 常见提权手法 实战案例分析 防护措施建议    注意：本文仅供安全研究和学习使用，请勿用于非法用途。">
+  <meta name="description" content="Linux内核提权(作为大一小登，浅浅复现下最近的提权漏洞，欢迎大佬交流，不喜勿喷)1.Copy File CVE-2026-31431官方链接:https:&#x2F;&#x2F;copy.fail&#x2F;exp[EXP代码已省略，详见官方链接]漏洞核心原理问题来自：algif_aead在处理：splice()page cachein-place operation时的逻辑错误。 攻击者能够：向只读 page cache">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux内核提权">
 <meta property="og:url" content="http://example.com/2026/05/20/Linux%E5%86%85%E6%A0%B8%E6%8F%90%E6%9D%83/index.html">
 <meta property="og:site_name">
-<meta property="og:description" content="Linux内核提权本文档详细介绍了 Linux 内核提权的相关技术和方法。 下载点击下载 PDF 文档 简介Linux 内核提权是安全研究中非常重要的一部分，涉及利用内核漏洞从普通用户权限提升到 root 权限。 本文档涵盖了：  内核漏洞原理 常见提权手法 实战案例分析 防护措施建议    注意：本文仅供安全研究和学习使用，请勿用于非法用途。">
+<meta property="og:description" content="Linux内核提权(作为大一小登，浅浅复现下最近的提权漏洞，欢迎大佬交流，不喜勿喷)1.Copy File CVE-2026-31431官方链接:https:&#x2F;&#x2F;copy.fail&#x2F;exp[EXP代码已省略，详见官方链接]漏洞核心原理问题来自：algif_aead在处理：splice()page cachein-place operation时的逻辑错误。 攻击者能够：向只读 page cache">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-05-20T07:27:36.000Z">
-<meta property="article:modified_time" content="2026-05-20T07:28:05.396Z">
+<meta property="article:modified_time" content="2026-05-20T07:48:12.767Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="内核漏洞">
@@ -38,7 +38,7 @@
   
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/custom.css?v=mpdqprbk"></head>
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/custom.css?v=mpdrg60g"></head>
 
 <body>
   <div id="container">
@@ -102,20 +102,36 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="Linux内核提权"><a href="#Linux内核提权" class="headerlink" title="Linux内核提权"></a>Linux内核提权</h1><p>本文档详细介绍了 Linux 内核提权的相关技术和方法。</p>
-<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p><a href="/Linux%E5%86%85%E6%A0%B8%E6%8F%90%E6%9D%83.pdf">点击下载 PDF 文档</a></p>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Linux 内核提权是安全研究中非常重要的一部分，涉及利用内核漏洞从普通用户权限提升到 root 权限。</p>
-<p>本文档涵盖了：</p>
-<ul>
-<li>内核漏洞原理</li>
-<li>常见提权手法</li>
-<li>实战案例分析</li>
-<li>防护措施建议</li>
-</ul>
-<hr>
-<blockquote>
-<p><strong>注意</strong>：本文仅供安全研究和学习使用，请勿用于非法用途。</p>
-</blockquote>
+        <p>Linux内核提权<br>(作为大一小登，浅浅复现下最近的提权漏洞，欢迎大佬交流，不喜勿喷)<br>1.Copy File CVE-2026-31431<br>官方链接:<a target="_blank" rel="noopener" href="https://copy.fail/">https://copy.fail/</a><br>exp<br>[EXP代码已省略，详见官方链接]<br>漏洞核心原理<br>问题来自：<br>algif_aead<br>在处理：<br>splice()<br>page cache<br>in-place operation<br>时的逻辑错误。</p>
+<p>攻击者能够：<br>向只读 page cache 写入受控数据<br>修改 SUID 程序内存页<br>不落盘<br>最终获得 root 权限<br>这也是它被称为Copy Fail的原因。<br>危险点<br>这个漏洞最危险的地方：</p>
+<ol>
+<li>利用稳定<br>不需要：<br>race condition<br>heap spray<br>精确 timing<br>公开分析称几乎：<br>100% reliable</li>
+<li>无文件落盘<br>它修改的是：<br>page cache<br>不是磁盘文件。<br>因此：<br>AIDE<br>Tripwire<br>OSSEC<br>等文件完整性检测可能无法发现。</li>
+<li>容器逃逸风险<br>如果攻击者：<br>拿到低权限容器<br>拿到 webshell<br>拿到 CI&#x2F;CD 执行权限<br>可能直接：<br>container -&gt; root<br>漏洞利用思路</li>
+</ol>
+<p>公开研究显示攻击链大致：<br>AF_ALG socket<br>↓<br>splice()<br>↓<br>page cache corruption<br>↓<br>修改 SUID 程序<br>↓<br>获得 root<br>例如污染：<br>&#x2F;usr&#x2F;bin&#x2F;su<br>的内存页。<br>CVSS<br>7.8 HIGH<br>AV:L&#x2F;AC:L&#x2F;PR:L&#x2F;UI:N&#x2F;S:U&#x2F;C:H&#x2F;I:H&#x2F;A:H<br>2.Dirty Frag CVE 2026-43284<br>官方链接：<a target="_blank" rel="noopener" href="https://github.com/V4bel/dirtyfrag">https://github.com/V4bel/dirtyfrag</a><br>exp<br><a target="_blank" rel="noopener" href="https://github.com/V4bel/dirtyfrag/blob/master/exp.c">https://github.com/V4bel/dirtyfrag/blob/master/exp.c</a><br>(1900行就不放惹qwq)</p>
+<p>（如果我绷住了，我那是不是绷绷炸弹）<br>漏洞原因<br>漏洞位于：<br>xfrm &#x2F; ESP &#x2F; IPsec<br>相关网络子系统。<br>核心问题：<br>ESP 解密路径错误处理 shared skb fragments<br>关键机制<br>Linux 网络层使用：<br>skb（socket buffer）<br>保存网络数据。<br>其中数据可能来自：<br>pipe buffer<br>page cache<br>splice<br>zero-copy<br>这些场景会共享底层物理页。<br>正常情况下<br>如果一个 page fragment：<br>被多个对象共享<br>内核必须：<br>Copy-On-Write（COW）<br>即：<br>先复制，再修改<br>否则会污染原始页。<br>Dirty Frag 的错误</p>
+<p>漏洞路径中：<br>ESP in-place decrypt<br>直接对共享页：<br>原地写入（in-place overwrite）<br>但：<br>没有正确检查 shared frag 标志<br>导致：<br>共享 page 被污染<br>危险点</p>
+<ol>
+<li>可写 Page Cache<br>这是最危险的部分。<br>攻击者能够：<br>修改 page cache<br>而不是磁盘文件本体。<br>例如：<br>&#x2F;usr&#x2F;bin&#x2F;su<br>&#x2F;usr&#x2F;bin&#x2F;passwd<br>因为：<br>page cache 是执行时真正使用的数据<br>即使磁盘文件没变：<br>运行中的程序已经被污染</li>
+<li>绕过文件完整性检测<br>很多安全工具检查：<br>inode<br>文件 hash<br>磁盘内容<br>但：</li>
+</ol>
+<p>Dirty Frag 修改的是内存缓存页<br>因此：<br>AIDE<br>Tripwire<br>RPM 校验<br>可能完全发现不了。<br>3. 提权极稳定<br>不同于传统 kernel exploit：<br>race<br>heap feng shui<br>ROP<br>Dirty Frag：<br>利用链非常稳定<br>因为：<br>page cache 行为确定性极强<br>4. 容器风险<br>如果容器允许：<br>AF_PACKET<br>IPsec<br>相关 socket<br>则可能：<br>container → host root<br>5. 内核级权限<br>一旦成功：<br>攻击者通常直接：<br>UID&#x3D;0<br>即：<br>root</p>
+<p>利用思路<br>这里只讲高层原理。<br>利用链整体<br>构造共享 page<br>↓<br>splice &#x2F; MSG_SPLICE_PAGES<br>↓<br>生成共享 skb frag<br>↓<br>触发 ESP decrypt<br>↓<br>in-place overwrite<br>↓<br>污染 page cache<br>↓<br>覆盖 SUID 程序<br>↓<br>执行 SUID<br>↓<br>root<br>第一步：构造共享页<br>攻击者先：<br>pipe + splice<br>让：<br>page cache 页<br>进入：<br>pipe buffer<br>形成：<br>shared fragment<br>第二步：进入 skb<br>再通过：<br>MSG_SPLICE_PAGES<br>把共享页挂入：</p>
+<p>skb<br>第三步：触发 ESP 解密<br>漏洞路径：<br>ESP decrypt<br>错误地：<br>原地修改共享页<br>第四步：污染 Page Cache<br>由于底层页实际上来自：<br>文件 page cache<br>于是：<br>文件缓存被改写<br>但：<br>磁盘文件未变<br>第五步：覆盖 SUID<br>例如：<br>&#x2F;usr&#x2F;bin&#x2F;su<br>被改成：<br>恶意 shellcode<br>或者：<br>setuid shell<br>第六步：获得 Root<br>执行：<br>&#x2F;usr&#x2F;bin&#x2F;su<br>实际执行的是：</p>
+<p>污染后的 page cache<br>于是：<br>root shell<br>CVSS<br>HIGH<br>AV:L&#x2F;AC:H&#x2F;PR:L&#x2F;UI:N&#x2F;S:C&#x2F;C:H&#x2F;I:H&#x2F;A:H<br>3.Fragnesia CVE 2026-46300<br>官方链接：<a target="_blank" rel="noopener" href="https://github.com/v12-security/pocs/tree/main/fragnesia">https://github.com/v12-security/pocs/tree/main/fragnesia</a><br>（这期有点暴力了吧）<br>exp<br><a target="_blank" rel="noopener" href="https://github.com/v12-security/pocs/blob/main/fragnesia/fragnesia.c">https://github.com/v12-security/pocs/blob/main/fragnesia/fragnesia.c</a><br>（1200行代码，向坚持手搓的老辈子致敬）<br>漏洞原因<br>核心漏洞点在：</p>
+<ol>
+<li>ESP-in-TCP &#x2F; XFRM 处理逻辑错误<br>内核在处理：<br>ESP 加密&#x2F;解密路径<br>TCP ULP（espintcp）<br>skb page fragment<br>时发生错误。</li>
+<li>page fragment “未正确 unshare”<br>关键问题：</li>
+</ol>
+<p>共享 page fragment 被错误当成独占页<br>正常逻辑应该：<br>shared page → COW（复制）<br>但漏洞中变成：<br>shared page → 直接 in-place 写<br>3. page cache 被错误映射<br>攻击路径导致：<br>skb fragment<br>↓<br>page cache page<br>↓<br>被 ESP 解密路径修改<br>结果：<br>只读文件的 cache 被写入<br>危险点</p>
+<ol>
+<li>本地提权<br>攻击者可从普通用户：<br>uid&#x3D;1000 → uid&#x3D;0</li>
+<li>修改只读文件内容<br>可以污染：<br>&#x2F;usr&#x2F;bin&#x2F;su<br>&#x2F;bin&#x2F;passwd<br>&#x2F;lib&#x2F;libc.so<br>systemd 二进制<br>这是核心危险点。</li>
+<li>无需复杂竞争条件<br>该类漏洞特点：<br>不依赖 race<br>不依赖 heap feng shui</li>
+</ol>
+<p>利用路径固定<br>exploit 稳定性较高<br>4. 容器逃逸风险<br>如果容器允许：<br>AF_XFRM<br>ESP socket<br>IPsec stack<br>则可能：<br>container → host root<br>5. 隐蔽性强<br>因为修改的是：<br>page cache（内存）<br>而不是磁盘文件：<br>文件 hash 检测可能正常<br>磁盘扫描看不出变化<br>利用思路<br>攻击链通常如下：<br>Step 1：构造共享 page fragment<br>使用：<br>splice<br>pipe<br>MSG_SPLICE_PAGES<br>sendfile<br>制造：<br>多个对象共享同一 page<br>Step 2：触发 skb → page 绑定<br>将 page fragment 放入：<br>skb (socket buffer)</p>
+<p>Step 3：触发 ESP 解密路径<br>进入：<br>xfrm&#x2F;espintcp<br>错误逻辑：<br>in-place decrypt<br>Step 4：page cache 被污染<br>导致：<br>只读文件缓存被修改<br>Step 5：修改 SUID 程序<br>例如：<br>&#x2F;usr&#x2F;bin&#x2F;su → injected payload<br>Step 6：执行提权<br>运行：<br>su<br>获得：<br>root shell<br>CVSS<br>CVSS v3.1: 7.8 (High)<br>AV:L &#x2F; AC:L &#x2F; PR:L &#x2F; UI:N &#x2F; S:U &#x2F; C:H &#x2F; I:H &#x2F; A:H</p>
 
       
     </div>
