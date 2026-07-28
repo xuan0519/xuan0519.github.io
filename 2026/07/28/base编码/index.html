@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Base编码 | xuan0519</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Base编码做pwn常常会碰到需要base编码的地方，今天来做个汇总，顺便忘记了可以回忆一下qwqChapter1：认识base编码Base 编码（如 Base64、Base32、Base16 等）是一类用于将任意二进制数据转换为纯文本字符串的编码方式。   在计算机中，许多网络协议（如邮件、URL、HTTP 协议头）最初都是为传输 ASCII 文本设计的。如果直接传输图片、音视频等二进制文件，遇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Base编码">
+<meta property="og:url" content="https://xuan0519.github.io/2026/07/28/base%E7%BC%96%E7%A0%81/index.html">
+<meta property="og:site_name" content="xuan0519">
+<meta property="og:description" content="Base编码做pwn常常会碰到需要base编码的地方，今天来做个汇总，顺便忘记了可以回忆一下qwqChapter1：认识base编码Base 编码（如 Base64、Base32、Base16 等）是一类用于将任意二进制数据转换为纯文本字符串的编码方式。   在计算机中，许多网络协议（如邮件、URL、HTTP 协议头）最初都是为传输 ASCII 文本设计的。如果直接传输图片、音视频等二进制文件，遇">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xuan0519.github.io/images/base-encoding/img-01.png">
+<meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShd9MQvvz3Vr9SMhuEcKGY38BA_UHigdc9LdtFQDpJN0WWrsAnL5TkT6Y&amp;s=10">
+<meta property="og:image" content="https://xuan0519.github.io/images/base-encoding/img-02.png">
+<meta property="og:image" content="https://xuan0519.github.io/images/base-encoding/img-03.png">
+<meta property="og:image" content="https://xuan0519.github.io/images/base-encoding/img-04.png">
+<meta property="og:image" content="https://xuan0519.github.io/images/base-encoding/img-05.png">
+<meta property="og:image" content="https://xuan0519.github.io/images/base-encoding/img-06.png">
+<meta property="article:published_time" content="2026-07-28T05:44:51.000Z">
+<meta property="article:modified_time" content="2026-07-28T06:03:39.570Z">
+<meta property="article:author" content="xuan0519">
+<meta property="article:tag" content="Base编码">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="编码">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xuan0519.github.io/images/base-encoding/img-01.png">
+  
+    <link rel="alternate" href="/atom.xml" title="xuan0519" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/custom.css?v=ms496v45"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xuan0519</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://xuan0519.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-base编码" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/07/28/base%E7%BC%96%E7%A0%81/" class="article-date">
+  <time class="dt-published" datetime="2026-07-28T05:44:51.000Z" itemprop="datePublished">2026-07-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">安全研究</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Base编码
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Base编码"><a href="#Base编码" class="headerlink" title="Base编码"></a>Base编码</h1><h6 id="做pwn常常会碰到需要base编码的地方，今天来做个汇总，顺便忘记了可以回忆一下qwq"><a href="#做pwn常常会碰到需要base编码的地方，今天来做个汇总，顺便忘记了可以回忆一下qwq" class="headerlink" title="做pwn常常会碰到需要base编码的地方，今天来做个汇总，顺便忘记了可以回忆一下qwq"></a>做pwn常常会碰到需要base编码的地方，今天来做个汇总，顺便忘记了可以回忆一下qwq</h6><h2 id="Chapter1：认识base编码"><a href="#Chapter1：认识base编码" class="headerlink" title="Chapter1：认识base编码"></a>Chapter1：认识base编码</h2><p><strong>Base 编码</strong>（如 Base64、Base32、Base16 等）是一类用于<strong>将任意二进制数据转换为纯文本字符串</strong>的编码方式。  </p>
+<p>在计算机中，许多网络协议（如邮件、URL、HTTP 协议头）最初都是为传输 ASCII 文本设计的。如果直接传输图片、音视频等二进制文件，遇到不可见字符或控制字符时，数据很容易丢失或损坏。Base 编码就是为了解决这个问题而诞生的。</p>
+<blockquote>
+<p><strong>核心误区提醒：</strong> Base 编码<strong>不是加密算法</strong>！它的映射表是公开的，任何人都能直接解码。它的作用是保证数据传输的<strong>可靠性</strong>，而非安全性。</p>
+</blockquote>
+<p>但需注意， Base 编码会使文件体积变大</p>
+<blockquote>
+<p>在 <strong>Base64</strong> 中，原本 3 字节（24 bits）的数据变成了 4 个 Base64 字符（对应 4 字节），所以体积会<strong>增加约 33%</strong>。</p>
+<p>在 <strong>Base32</strong> 中，每 5 字节变 8 个字符，体积<strong>增加约 60%</strong>。</p>
+<p>在 <strong>Base16</strong> 中，每 1 字节（8 bits）变 2 个字符（Hex），体积<strong>翻倍（增加 100%）</strong>。</p>
+</blockquote>
+<h2 id="Chapter2-Base的各种编码类型"><a href="#Chapter2-Base的各种编码类型" class="headerlink" title="Chapter2:  Base的各种编码类型"></a>Chapter2:  Base的各种编码类型</h2><h3 id="Base16"><a href="#Base16" class="headerlink" title="Base16"></a><strong>Base16</strong></h3><p><strong>Base16</strong>（也常被称为<strong>十六进制编码 &#x2F; Hex Encoding</strong>）是最基础、最直观的二进制到文本的编码方式。</p>
+<p>它的核心逻辑非常简单：<strong>用 16 个打印字符来表示所有数值</strong>。因为计算机中的 1 个字节（Byte）包含 8 个比特（Bit），正好可以完美拆分为两个 4-bit 的半字节（Nibble），而每个 4-bit 的取值范围恰好是 0~15，完全可以用 16 个字符一一对应。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">数值:  0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15</span><br><span class="line">字符:  0  1  2  3  4  5  6  7  8  9   A  B  C  D  E  F</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作原理（太简单了直接附图）"><a href="#工作原理（太简单了直接附图）" class="headerlink" title="工作原理（太简单了直接附图）"></a>工作原理（太简单了直接附图）</h3><img src="/images/base-encoding/img-01.png" alt="image-20260728130608612" style="zoom: 33%;" />
+
+<h3 id="Base32"><a href="#Base32" class="headerlink" title="Base32"></a><strong>Base32</strong></h3><p><strong>Base32</strong> 是一种将二进制数据转换为 32 个可打印 ASCII 字符组成的文本编码格式（RFC 4648）。</p>
+<p>与 Base64 相比，Base32 设计的核心目标是<strong>防误读</strong>和<strong>不区分大小写</strong>，特别适合需要<strong>人工抄写、口述或在不区分大小写的文件系统</strong>中使用的场景。</p>
+<p>最常用的标准 Base32 字符集由 <strong>大写英文字母 <code>A-Z</code></strong> 和 <strong>数字 <code>2-7</code></strong> 组成（共 32 个）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 2 3 4 5 6 7</span><br></pre></td></tr></table></figure>
+
+<p><strong>为什么排除数字 <code>0</code>, <code>1</code>, <code>8</code>, <code>9</code>？</strong></p>
+<ul>
+<li><strong><code>0</code> 和 <code>O</code></strong> 极其容易混淆。</li>
+<li><strong><code>1</code>、<code>I</code> 和 <code>l</code></strong> 极其容易混淆。</li>
+<li>剔除了 <code>0, 1, 8, 9</code> 后，剩下的数字正好是 <code>2-7</code>，加上 26 个字母恰好凑齐 32 个字符。</li>
+</ul>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>Base32 的基本逻辑是按 <strong>5 bits</strong> 为一组进行切分（因为2的5次为32）</p>
+<ol>
+<li><strong>组合：</strong> 将输入的二进制数据按 <strong>5 个字节（40 bits）</strong> 分为一组（40 是 8 bit 字节和 5 bit 编码的最小公倍数）。</li>
+<li><strong>拆分：</strong> 把 40 bits 拆分成 <strong>8 个 5-bit</strong> 的半字节。</li>
+<li><strong>查表：</strong> 将每个 5-bit 的十进制数值（0 ~ 31）映射到 Base32 索引表对应的字符。</li>
+</ol>
+<h4 id="补位机制"><a href="#补位机制" class="headerlink" title="补位机制"></a>补位机制</h4><p>如果输入的数据字节数不能被 5 整除，末尾会用 <code>0</code> 补足 5 的倍数个 bit，并在生成的字符串末尾加上 <strong><code>=</code></strong> 作为填充标示。一个完整的 Base32 编码块长度必须是 <strong>8 的倍数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th><strong>原始字节数</strong></th>
+<th><strong>编码后字符数</strong></th>
+<th><strong>末尾填充 &#x3D; 数量</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 字节 (8 bits)</td>
+<td>2 个字符</td>
+<td><code>======</code> (6 个)</td>
+</tr>
+<tr>
+<td>2 字节 (16 bits)</td>
+<td>4 个字符</td>
+<td><code>====</code> (4 个)</td>
+</tr>
+<tr>
+<td>3 字节 (24 bits)</td>
+<td>5 个字符</td>
+<td><code>===</code> (3 个)</td>
+</tr>
+<tr>
+<td>4 字节 (32 bits)</td>
+<td>7 个字符</td>
+<td><code>=</code> (1 个)</td>
+</tr>
+<tr>
+<td>5 字节 (40 bits)</td>
+<td>8 个字符</td>
+<td>无 (0 个)</td>
+</tr>
+</tbody></table>
+<p>虽然 Base32 的体积膨胀率约 <strong>60%</strong>（比 Base64 的 33% 稍高），但它在以下领域非常流行：</p>
+<ol>
+<li><strong>双因素认证（2FA &#x2F; TOTP 密钥）：</strong> Google Authenticator 或 Microsoft Authenticator 绑定时提示输入的密钥（如 <code>JBSWY3DPEHPK3PXP</code>）就是 Base32 编码，极易人工输入且不易看错。</li>
+<li><strong>暗网 &#x2F; 洋葱路由地址（.onion）：</strong> Tor 网络的 V3 域名（如 <code>v3...onion</code>）就是公钥信息的 Base32 编码。</li>
+<li><strong>DNS 记录与文件名：</strong> 域名和某些操作系统文件名对大小写不敏感，Base32 不区分大小写的特性非常适合这些场景。</li>
+</ol>
+<h3 id="Base58"><a href="#Base58" class="headerlink" title="Base58"></a>Base58</h3><p><strong>Base58</strong> 是一种专门为<strong>人类友好</strong>和<strong>高容错率</strong>设计的文本编码方式。</p>
+<p>它最初由中本聪（Satoshi Nakamoto）为比特币（Bitcoin）设计，目的是生成便于人工抄写、展示且不易出错的加密货币钱包地址。</p>
+<h2 id="字符集：去粗取精"><a href="#字符集：去粗取精" class="headerlink" title="字符集：去粗取精"></a>字符集：去粗取精</h2><p>Base58 是在标准 Base64 字符集的基础上，剔除了 <strong>6 个极易混淆或影响选中的字符</strong>：</p>
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShd9MQvvz3Vr9SMhuEcKGY38BA_UHigdc9LdtFQDpJN0WWrsAnL5TkT6Y&amp;s=10" alt="Base58 在比特币地址生成中的应用流程，AI 生成" style="zoom: 50%;" />
+
+<h6 id="Base58-在比特币地址生成中的应用流程"><a href="#Base58-在比特币地址生成中的应用流程" class="headerlink" title="Base58 在比特币地址生成中的应用流程"></a>Base58 在比特币地址生成中的应用流程</h6><ol>
+<li><strong><code>0</code></strong>（数字零）和 <strong><code>O</code></strong>（大写字母 O）—— 极易看错。</li>
+<li><strong><code>I</code></strong>（大写字母 I）和 <strong><code>l</code></strong>（小写字母 L）—— 在很多等宽字体中完全一样。</li>
+<li><strong><code>+</code></strong>（加号）和 <strong><code>/</code></strong>（斜杠）—— 在双击选中文本时，这两个符号会导致选区断开，影响复制粘贴。</li>
+</ol>
+<p>删掉这 6 个字符后，只剩下 <strong>58 个字符</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz</span><br></pre></td></tr></table></figure>
+
+<p>索引表</p>
+<img src="/images/base-encoding/img-02.png" alt="image-20260728131921506" style="zoom:50%;" />
+
+<h2 id="工作原理：大数进制转换"><a href="#工作原理：大数进制转换" class="headerlink" title="工作原理：大数进制转换"></a>工作原理：大数进制转换</h2><p>与 Base64、Base32 或 Base16 不同，Base58 <strong>无法直接按固定 bit 位拆分</strong>。</p>
+<p>它的底层机制是将整个二进制字节串视为一个<strong>超大整数</strong>，然后进行<strong>进制转换</strong>：</p>
+<ol>
+<li><strong>转为大整数：</strong> 将输入的二进制字节数组看作一个大整数 N。</li>
+<li><strong>不断模 58：</strong> 将 N连续除以 58，每次计算得到的余数（0 到 57）映射到 Base58 字符表中。</li>
+<li><strong>反转拼接：</strong> 将每次得到的字符按从后往前的顺序拼接，生成最终的 Base58 字符串。</li>
+<li><strong>前导零处理：</strong> 原始数据开头的每一个 <code>0x00</code> 字节，都会在 Base58 编码结果开头直接补充一个字符 <code>1</code>。</li>
+</ol>
+<h2 id="扩展衍生：Base58Check"><a href="#扩展衍生：Base58Check" class="headerlink" title="扩展衍生：Base58Check"></a>扩展衍生：Base58Check</h2><p>在区块链领域（如 BTC、LTC 等），更常用的是 <strong>Base58Check</strong>。它在 Base58 的基础上加入了<strong>校验码机制</strong>：<br>$$<br>\text{数据结构} &#x3D; \text{前缀（1字节）} + \text{有效载荷 (Payload)} + \text{双重 SHA-256 校验码前4字节}<br>$$</p>
+<ul>
+<li><strong>作用：</strong> 如果用户在输入钱包地址时打错了一个字符，钱包客户端可以通过校验码瞬间检测出地址无效，从而<strong>防止资产转错到黑洞地址</strong>。</li>
+</ul>
+<h3 id="Base64-important"><a href="#Base64-important" class="headerlink" title="Base64(important)"></a><strong>Base64(important)</strong></h3><p><strong>Base64</strong> 是全网最常用、最普及的二进制文本编码格式（RFC 4648）。</p>
+<p>它的核心作用是<strong>将任意二进制数据转换为 64 个安全且可打印的 ASCII 字符</strong>，以便在网络传输（如 HTTP、SMTP 邮件）中安全通过，防止数据因不可见字符或控制字符被丢弃或转码损坏。</p>
+<h4 id="字符集与映射机制"><a href="#字符集与映射机制" class="headerlink" title="字符集与映射机制"></a>字符集与映射机制</h4><p>标准 Base64 使用以下 <strong>64 个字符</strong>（不含填充符）：</p>
+<ul>
+<li>大写字母 <code>A-Z</code>（26 个，索引 0–25）</li>
+<li>小写字母 <code>a-z</code>（26 个，索引 26–51）</li>
+<li>数字 <code>0-9</code>（10 个，索引 52–61）</li>
+<li>特殊符号 <code>+</code> 和 <code>/</code>（2 个，索引 62 和 63）</li>
+</ul>
+<img src="/images/base-encoding/img-03.png" alt="image-20260728132117409" style="zoom:33%;" />
+
+<h4 id="拆分与填充原理（3-字节变-4-字符）"><a href="#拆分与填充原理（3-字节变-4-字符）" class="headerlink" title="拆分与填充原理（3 字节变 4 字符）"></a>拆分与填充原理（3 字节变 4 字符）</h4><p>因为 2^6 &#x3D; 64，Base64 选择将二进制数据按 <strong>6 bits</strong> 为一组切分（原本 1 字节为 8 bits）。</p>
+<p>最小公倍数是 24 bits：因此 <strong>3 个输入字节（24 bits）会被恰好重新分组为 4 个 6-bit 字符</strong>。</p>
+<ul>
+<li><p><strong>完整 3 字节（如 <code>&quot;Man&quot;</code>）：</strong><br>$$<br>8 bits × 3 &#x3D; 24 bits \rightarrow 拆分为 6 bits × 4 \rightarrow 编码为 TWFu<br>$$</p>
+</li>
+<li><p><strong>不足 3 字节时的补位（Padding）：</strong></p>
+<ul>
+<li>若剩下 2 字节（16 bits）：补零到 18 bits，拆成 3 个字符，末尾补 1 个 <code>=</code>。</li>
+<li>若剩下 1 字节（8 bits）：补零到 12 bits，拆成 2 个字符，末尾补 2 个 <code>=</code>。</li>
+</ul>
+</li>
+</ul>
+<img src="/images/base-encoding/img-04.png" alt="image-20260728132414352" style="zoom:50%;" />
+
+<h6 id="（直接粘贴一个csdn帖子的图片实例，这样更好理解qwq）"><a href="#（直接粘贴一个csdn帖子的图片实例，这样更好理解qwq）" class="headerlink" title="（直接粘贴一个csdn帖子的图片实例，这样更好理解qwq）"></a>（直接粘贴一个csdn帖子的图片实例，这样更好理解qwq）</h6><h4 id="衍生版本：URL-Safe-Base64"><a href="#衍生版本：URL-Safe-Base64" class="headerlink" title="衍生版本：URL-Safe Base64"></a>衍生版本：URL-Safe Base64</h4><p>由于标准 Base64 包含 <code>+</code> 和 <code>/</code>，如果直接放进 URL 的 query 参数中，<code>+</code> 会被解读为空格，<code>/</code> 会被解读为路径分隔符。</p>
+<p>为了解决这个问题，诞生了 <strong>URL 安全的 Base64</strong>：</p>
+<ul>
+<li>将 <code>+</code> 替换为 <strong><code>-</code></strong> (减号)</li>
+<li>将 <code>/</code> 替换为 <strong><code>_</code></strong> (下划线)</li>
+<li>通常<strong>移除末尾的 <code>=</code></strong></li>
+</ul>
+<p>常见于 JWT（JSON Web Token）和 OAuth Token 中。</p>
+<h4 id="常见应用场景"><a href="#常见应用场景" class="headerlink" title="常见应用场景"></a>常见应用场景</h4><ol>
+<li><p>Data URI 内嵌文件： 在 HTML&#x2F;CSS 中直接嵌入小图片，减少 HTTP 请求。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAE...&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>电子邮件附件（MIME 标准）：</strong> 保证邮件服务商传输图片、文档等二进制内容时不乱码。</p>
+</li>
+<li><p><strong>身份认证令牌（JWT）：</strong> Token 的 Header 和 Payload 都是用 URL-safe Base64 编码呈现。</p>
+</li>
+</ol>
+<h3 id="Base85"><a href="#Base85" class="headerlink" title="Base85"></a><strong>Base85</strong></h3><p><strong>Base85</strong>（也称为 <strong>Ascii85</strong>）是一种效率极高、空间利用率极优的二进制文本编码格式。</p>
+<p>它的设计初衷是在<strong>保持文本安全传输</strong>的前提下，解决 Base64 体积膨胀过大的问题（Base64 体积膨胀约 33%，而 Base85 仅膨胀 <strong>25%</strong>）。</p>
+<img src="/images/base-encoding/img-05.png" alt="image-20260728132932122" style="zoom:33%;" />
+
+<h4 id="为什么是-85？数学原理"><a href="#为什么是-85？数学原理" class="headerlink" title="为什么是 85？数学原理"></a>为什么是 85？数学原理</h4><p>Base85 的核心逻辑是将 <strong>4 个字节（32 bits）</strong> 数据编码为 <strong>5 个 85 进制字符</strong>：</p>
+<ul>
+<li><p>$$<br>2^{32} &#x3D; 4,294,967,296（4 字节所能表达的最大数值状态数）<br>$$</p>
+</li>
+<li><p>$$<br>85^5 &#x3D; 4,437,053,125<br>$$</p>
+</li>
+</ul>
+<p>因为 85^5 &gt; 2^{32}，所以用 <strong>5 个 85 进制字符</strong>足以无损表达任何 <strong>32 bit（4 字节）</strong> 的二进制数值。</p>
+<p>相比之下，Base64 是用 4 个字符表达 3 字节数据（膨胀率为<br>$$<br>4&#x2F;3 \approx 133.3%<br>$$<br>），而 Base85 是用 5 个字符表达 4 字节数据（膨胀率为<br>$$<br>5&#x2F;4 &#x3D; 125%<br>$$<br>），节省了更多带宽和空间。</p>
+<h4 id="两种主流变体与字符集"><a href="#两种主流变体与字符集" class="headerlink" title="两种主流变体与字符集"></a>两种主流变体与字符集</h4><p>Base85 在历史演进中形成了两个最著名的版本：</p>
+<h3 id="1-Adobe-Ascii85（PostScript-PDF-标准）"><a href="#1-Adobe-Ascii85（PostScript-PDF-标准）" class="headerlink" title="1. Adobe Ascii85（PostScript &#x2F; PDF 标准）"></a>1. Adobe Ascii85（PostScript &#x2F; PDF 标准）</h3><ul>
+<li><strong>字符集：</strong> 从 ASCII 码 33 (<code>!</code>) 到 ASCII 码 117 (<code>u</code>) 的 85 个可打印字符。</li>
+<li><strong>特殊优化（全零压缩）：</strong> 如果连续遇到 4 个全零字节（<code>0x00000000</code>），不需要输出 5 个字符，而是直接用<strong>单个字符 <code>z</code></strong> 替代。这在文本或图片含有大量空白字节时能极大缩小体积。</li>
+<li><strong>包裹界定符：</strong> 编码结果通常以 <code>&lt;~</code> 开头，以 <code>~&gt;</code> 结尾。</li>
+</ul>
+<h3 id="2-RFC-1924-z85（Git-IPv6-标准）"><a href="#2-RFC-1924-z85（Git-IPv6-标准）" class="headerlink" title="2. RFC 1924 &#x2F; z85（Git &#x2F; IPv6 标准）"></a>2. RFC 1924 &#x2F; z85（Git &#x2F; IPv6 标准）</h3><ul>
+<li><strong>字符集：</strong> 删除了引号、斜杠等容易被代码或 Shell 转义干扰的特殊符号，改用数字 <code>0-9</code>、字母 <code>a-z</code> &#x2F; <code>A-Z</code> 以及一些安全符号（如 <code>.-:+=^!/*?&amp;&lt;&gt;()[]{}@%#</code>）。</li>
+<li><strong>应用场景：</strong> RFC 1924 最初被提出用来以更短的文本表达 IPv6 地址；后来的 Z85（ZeroMQ）变体被广泛用于二进制协议和 <strong>Git</strong> 的内部存储。</li>
+</ul>
+<h3 id="Base91"><a href="#Base91" class="headerlink" title="Base91"></a><strong>Base91</strong></h3><p><strong>Base91</strong> 是一种将二进制数据转换为 8 bit ASCII 文本的高效率编码方式，由 Joachim Henke 设计。</p>
+<p>它是目前在<strong>仅使用单字节 ASCII 字符</strong>的前提下，压缩效率最高、体积膨胀率最低的常用文本编码之一（体积膨胀率仅为 <strong>14% ~ 23%</strong>，远优于 Base64 的 33.3% 和 Base85 的 25%）。</p>
+<h2 id="核心原理：动态变长-Bit-映射"><a href="#核心原理：动态变长-Bit-映射" class="headerlink" title="核心原理：动态变长 Bit 映射"></a>核心原理：动态变长 Bit 映射</h2><p>与 Base64（固定 6 bits）、Base32（固定 5 bits）或 Base85（固定 32 bits 转 5 字符）不同，Base91 的最大特色是采用了<strong>变长分组算法</strong>：</p>
+<ol>
+<li><p><strong>变长比特积攒：</strong> Base91 维护一个位缓冲区（Bit Buffer）。它每次从输入流中打包 13 bits 或 14 bits 数据。</p>
+</li>
+<li><p><strong>巧妙的数学边界：</strong></p>
+<ul>
+<li><p>$$<br>91^2 &#x3D; 8281<br>$$</p>
+</li>
+<li><p>$$<br>2^{13} &#x3D; 8192 （可装下 13 bits）<br>$$</p>
+</li>
+<li><p>$$<br>2^{14} &#x3D; 16384<br>$$</p>
+</li>
+<li><p>如果积攒的数据组合值小于 8192，则<strong>一次性编码 13 bits</strong>（输出 2 个 Base91 字符）；如果大于等于 8192，则<strong>一次性编码 14 bits</strong>（同样输出 2 个 Base91 字符）。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>极极致利用：</strong> 这种根据数据内容动态选择 13 bits 还是 14 bits 的机制，使得 Base91 能够将 ASCII 字符集利用到极致。</p>
+</li>
+</ol>
+<h4 id="字符集：利用全部安全-ASCII-字符"><a href="#字符集：利用全部安全-ASCII-字符" class="headerlink" title="字符集：利用全部安全 ASCII 字符"></a>字符集：利用全部安全 ASCII 字符</h4><p>标准 ASCII 码中共有 94 个可打印字符（ASCII 33 到 126）。Base91 剔除了其中 3 个在代码或传输中容易引起转义麻烦的字符（例如双引号 <code>&quot;</code>, 反斜线 <code>\</code>, 以及短划线 <code>-</code> 或换行符等特殊处理），精选出 <strong>91 个安全字符</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A-Z, a-z, 0-9</span><br><span class="line">! # $ % &amp; ( ) * + , . / : ; &lt; = &gt; ? @ [ ] ^ _ ` &#123; | &#125; ~</span><br></pre></td></tr></table></figure>
+
+<img src="/images/base-encoding/img-06.png" alt="image-20260728134330406" style="zoom:33%;" />
+
+<h3 id="Base100"><a href="#Base100" class="headerlink" title="Base100"></a><strong>Base100</strong></h3><p>Base100是一种非常独特的 Emoji 表情符号编码。  </p>
+<p>与常见的 Base64 或 Base16（Hex）不同，Base100 不是为了提高传输效率而设计的，它的核心玩点在于<strong>将任意二进制数据或文本全部转换为 Emoji 表情串</strong>。  </p>
+<h4 id="核心原理："><a href="#核心原理：" class="headerlink" title="核心原理："></a>核心原理：</h4><p>$$<br>1 字节 \rightarrow1 个 Emoji<br>$$</p>
+<p>在计算机中，1 个字节（Byte）的取值范围是 <code>0 ~ 255</code>（共 256 种可能）。</p>
+<p>Base100 的做法是：<strong>将每个字节的数值加上一个固定偏移量（通常偏移 <code>55</code> 或映射到特定的 UTF-8&#x2F;Unicode Emoji 区块），转换为 1 个 4-bit 长度的 UTF-8 表情符号</strong>。</p>
+<p>例如：</p>
+<ul>
+<li>文本 <code>&quot;the quick brown fox...&quot;</code></li>
+<li>经过 Base100 编码后会变成：<code>👫👟👜🐗👨👬👠👚👢🐗...</code></li>
+</ul>
+<h4 id="工作机制举例"><a href="#工作机制举例" class="headerlink" title="工作机制举例"></a>工作机制举例</h4><p>以字符 <code>&#39;A&#39;</code>（ASCII 码 65）为例：</p>
+<ol>
+<li>原始数值：<code>65</code> (Hex: <code>0x41</code>)</li>
+<li>加上 Base100 的 Base 偏移：$65 + 55 &#x3D; 120$</li>
+<li>组合 UTF-8 编码字节：最终映射到 Unicode 的 Emoji 区块（如 <code>U+1F400</code> 系列，包含 👝, 👛, 👜, 👟 等日常物品与人物 Emoji）</li>
+<li>输出：对应的 Emoji 表情</li>
+</ol>
+<h4 id="特性与优缺点对比"><a href="#特性与优缺点对比" class="headerlink" title="特性与优缺点对比"></a>特性与优缺点对比</h4><h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><ol>
+<li><strong>视觉直观极强：</strong> 编码结果是一串纯 Emoji 表情，极具趣味性。</li>
+<li><strong>校验方便（对人类友好）：</strong> 比起一长串复杂的十六进制 Hash 值，人类对图片&#x2F;Emoji 的视觉记忆更敏感，一眼就能看出变化。</li>
+<li><strong>字符数变少：</strong> 如果按 Unicode 字符数量计算，1 字节对应 1 个 Emoji 字符，在限制<strong>字符数</strong>（而非字节数）的平台上有特殊用途。</li>
+</ol>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><ol>
+<li><p><strong>数据体积巨大（膨胀率高达 ~200% - 300%）：</strong></p>
+<p>因为一个标准的 UTF-8 Emoji 表情在底层通常占用 <strong>4 个字节</strong>（Bytes），而它表达的其实只有 <strong>1 个原始字节</strong>。因此文件实际占用的磁盘&#x2F;网络流量会膨胀约 3 到 4 倍。</p>
+</li>
+</ol>
+<h4 id="典型应用场景"><a href="#典型应用场景" class="headerlink" title="典型应用场景"></a>典型应用场景</h4><ul>
+<li><strong>CTF 隐写与极客 Challenge：</strong> 网络安全竞赛（CTF）中常出现用 Base100 隐藏加密 Payload 或 Flag 的题目。</li>
+<li><strong>终端校验码展示：</strong> 在 CLI 命令行工具里，把 Hash 或 Checksum 转为一行 Emoji，方便开发人员快速比对。</li>
+<li><strong>趣味聊天 &#x2F; 社交媒体发文：</strong> 隐藏文本内容，看似是一串无意义的表情包，解码后才是真实留言。</li>
+</ul>
+<h3 id="常见-Base-编码全景汇总图表"><a href="#常见-Base-编码全景汇总图表" class="headerlink" title="常见 Base 编码全景汇总图表"></a>常见 Base 编码全景汇总图表</h3><p>从 Base16 到 Base100，各类编码的消长关系如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>编码名称</strong></th>
+<th><strong>字符集</strong></th>
+<th><strong>膨胀率 (字节体积)</strong></th>
+<th><strong>核心设计诉求</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Base16</strong></td>
+<td><code>0-9, A-F</code></td>
+<td><strong>100%</strong></td>
+<td>最简单直观，十六进制与内存调试</td>
+</tr>
+<tr>
+<td><strong>Base32</strong></td>
+<td><code>A-Z, 2-7</code></td>
+<td><strong>60%</strong></td>
+<td>防误读、不区分大小写（2FA 密钥）</td>
+</tr>
+<tr>
+<td><strong>Base58</strong></td>
+<td>剔除混淆字符</td>
+<td><strong>~37%</strong></td>
+<td>防抄错、选中不破字（比特币地址）</td>
+</tr>
+<tr>
+<td><strong>Base64</strong></td>
+<td><code>A-Z, a-z, 0-9, +, /</code></td>
+<td><strong>~33%</strong></td>
+<td>兼容性之王，全网标准（MIME&#x2F;JWT）</td>
+</tr>
+<tr>
+<td><strong>Base85</strong></td>
+<td>85 个打印字符</td>
+<td><strong>25%</strong></td>
+<td>高密度文本传输（PDF &#x2F; Git）</td>
+</tr>
+<tr>
+<td><strong>Base91</strong></td>
+<td>91 个打印字符</td>
+<td><strong>~14%-23%</strong></td>
+<td>ASCII 字符极尽利用</td>
+</tr>
+<tr>
+<td><strong>Base100</strong></td>
+<td><strong>Emoji 表情</strong></td>
+<td><strong>~300%</strong></td>
+<td><strong>趣味性、人类视觉对比、CTF 隐写</strong></td>
+</tr>
+</tbody></table>
+<h2 id="Chapter3-编码之间的互相转化"><a href="#Chapter3-编码之间的互相转化" class="headerlink" title="Chapter3: 编码之间的互相转化"></a>Chapter3: 编码之间的互相转化</h2><p>Base 家族（Base16, Base32, Base58, Base64, Base85, Base91, Base100 等）之间的互相转换，本质上<strong>从来都不是“直译”</strong>，而是<strong>以“原始二进制数据（Raw Bytes）”作为桥梁的二次转换过程</strong>。</p>
+<p>无论你想把 Base64 转成 Base58，还是把 Hex (Base16) 转成 Base32，核心流转模型永远是：<br>$$<br>\text{源 Base 文本} \xrightarrow[\text{第一步}]{\text{解码 (Decode)}} \mathbf{\text{原始二进制数据 (Bytes)}} \xrightarrow[\text{第二步}]{\text{编码 (Encode)}} \text{目标 Base 文本}<br>$$</p>
+<h4 id="转换逻辑示意"><a href="#转换逻辑示意" class="headerlink" title="转换逻辑示意"></a>转换逻辑示意</h4><p>假设我们要把 Base64 的字符串 <code>&quot;SGk=&quot;</code>（英文 “Hi”）转换为 Base16 (Hex)：</p>
+<ol>
+<li><strong>第一步（解码）：</strong> 将 Base64 的 <code>&quot;SGk=&quot;</code> 解码，还原出它背后的原始二进制字节 <code>b&#39;Hi&#39;</code>（即 Hex 内存中的 <code>0x48 0x69</code>）。</li>
+<li><strong>第二步（编码）：</strong> 将获得的字节 <code>b&#39;Hi&#39;</code> 传入 Base16 编码器，得到目标字符串 <code>&quot;4869&quot;</code>。</li>
+</ol>
+<p><strong>关键提醒：</strong> 永远不要尝试写正则表达式或硬映射表去把 Base64 的字符直接映射到 Base32，因为不同 Base 算法的切分 Bit 位数（4 bits、5 bits、6 bits、85 进制等）完全不同，只有**二进制字节（Bytes）**才是所有 Base 编码通用的“度量衡”。</p>
+<h4 id="互转时的注意事项与坑点"><a href="#互转时的注意事项与坑点" class="headerlink" title="互转时的注意事项与坑点"></a>互转时的注意事项与坑点</h4><ol>
+<li><strong>补位符（Padding <code>=</code>）补全：</strong> 在处理 Base64 或 Base32 字符串时，如果输入的字符串丢失了末尾的 <code>=</code>（被裁剪了），大多数解码器会直接报错。在解码前可能需要补齐字符串长度到 4 或 8 的倍数。</li>
+<li><strong>大小写敏感性：</strong><ul>
+<li><strong>Base16 &#x2F; Base32：</strong> 规范默认不区分大小写（但解码库通常要求大写）。</li>
+<li><strong>Base58 &#x2F; Base64 &#x2F; Base85：</strong> <strong>严格区分大小写</strong>，打错一个字母大小写就会导致整个原始数据损坏。</li>
+</ul>
+</li>
+<li><strong>字符集变体（如 URL-Safe Base64）：</strong> 如果你要把一个 URL-Safe Base64（含 <code>-</code> 和 <code>_</code>）转成其他 Base，需要先将其中的 <code>-</code> 换回 <code>+</code>，<code>_</code> 换回 <code>/</code>，再进行标准 Base64 解码。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://xuan0519.github.io/2026/07/28/base%E7%BC%96%E7%A0%81/" data-id="cuidwRpwbqaaVkCWm5D-ioapo" data-title="Base编码" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Base%E7%BC%96%E7%A0%81/" rel="tag">Base编码</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PWN/" rel="tag">PWN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E7%A0%81/" rel="tag">编码</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2026/06/24/%E6%95%B4%E6%95%B0%E6%BA%A2%E5%87%BA/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">整数溢出</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">安全研究</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Base%E7%BC%96%E7%A0%81/" rel="tag">Base编码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PWN/" rel="tag">PWN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" rel="tag">二进制安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B4%E6%95%B0%E6%BA%A2%E5%87%BA/" rel="tag">整数溢出</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A0%81/" rel="tag">编码</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Base%E7%BC%96%E7%A0%81/" style="font-size: 10px;">Base编码</a> <a href="/tags/PWN/" style="font-size: 20px;">PWN</a> <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" style="font-size: 10px;">二进制安全</a> <a href="/tags/%E6%95%B4%E6%95%B0%E6%BA%A2%E5%87%BA/" style="font-size: 10px;">整数溢出</a> <a href="/tags/%E7%BC%96%E7%A0%81/" style="font-size: 10px;">编码</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">七月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/06/">六月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/07/28/base%E7%BC%96%E7%A0%81/">Base编码</a>
+          </li>
+        
+          <li>
+            <a href="/2026/06/24/%E6%95%B4%E6%95%B0%E6%BA%A2%E5%87%BA/">整数溢出</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/22/Linux%E5%86%85%E6%A0%B8%E6%8F%90%E6%9D%83/">Linux内核提权</a>
+          </li>
+        
+          <li>
+            <a href="/2026/04/07/%E6%A0%88%E6%BA%A2%E5%87%BA/">栈溢出</a>
+          </li>
+        
+          <li>
+            <a href="/2026/04/02/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/">格式化字符串漏洞</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 xuan0519<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
